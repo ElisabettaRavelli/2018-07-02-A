@@ -9,7 +9,9 @@ package it.polito.tdp.extflightdelays;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.extflightdelays.model.Airport;
 import it.polito.tdp.extflightdelays.model.Model;
+import it.polito.tdp.extflightdelays.model.VerticePeso;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -37,7 +39,7 @@ public class ExtFlightDelaysController {
     private Button btnAnalizza; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbBoxAeroportoPartenza"
-    private ComboBox<?> cmbBoxAeroportoPartenza; // Value injected by FXMLLoader
+    private ComboBox<Airport> cmbBoxAeroportoPartenza; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnAeroportiConnessi"
     private Button btnAeroportiConnessi; // Value injected by FXMLLoader
@@ -55,6 +57,8 @@ public class ExtFlightDelaysController {
 	    	Integer distanzaMin = Integer.parseInt(distanzaMinima.getText());
 	    	this.model.creaGrafo(distanzaMin);
 	    	txtResult.appendText("Grafo creato con " + this.model.getVertici() + "vertici e " +this.model.getArchi()+" archi\n");
+	    	
+	    	cmbBoxAeroportoPartenza.getItems().addAll(this.model.getAeroporti());
     	
     	}catch(NumberFormatException e) {
     		txtResult.appendText("Inserire un numero intero reale\n");
@@ -64,6 +68,11 @@ public class ExtFlightDelaysController {
 
     @FXML
     void doCalcolaAeroportiConnessi(ActionEvent event) {
+    	
+    	Integer id = cmbBoxAeroportoPartenza.getValue().getId();
+    	for(VerticePeso vp: this.model.getAdiacenti(id)) {
+    		txtResult.appendText("Adiacente: " +vp.getVertice() + " con peso= "+ vp.getPeso()+"\n");
+    	}
 
     }
 

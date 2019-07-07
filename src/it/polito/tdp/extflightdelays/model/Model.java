@@ -1,7 +1,10 @@
 package it.polito.tdp.extflightdelays.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -15,9 +18,13 @@ public class Model {
 	private ExtFlightDelaysDAO dao;
 	private Graph<Integer, DefaultWeightedEdge> grafo;
 	private List<ArcoPeso> connessioni;
+	private Map<Integer, Airport> idMap;
+	private List<Airport> aeroporti;
 	
 	public Model() {
 		this.dao = new ExtFlightDelaysDAO();
+		this.idMap = new HashMap<>();
+		this.dao.loadAllAirports(idMap);
 	}
 	
 	public void creaGrafo(Integer distanzaMedia) {
@@ -38,6 +45,27 @@ public class Model {
 
 	public int getArchi() {
 		return this.grafo.edgeSet().size();
+	}
+	
+	public List<Airport> getAeroporti(){
+		this.aeroporti = new ArrayList<>();
+		for(Integer i: this.grafo.vertexSet()) {
+			if(idMap.containsKey(i)) {
+				this.aeroporti.add(idMap.get(i));
+			}
+		}
+		Collections.sort(this.aeroporti);
+		return this.aeroporti;
+	}
+	
+	public List<VerticePeso> getAdiacenti(Integer id){
+		List<Integer> adiacenti = new ArrayList<>();
+		List<VerticePeso> result = new ArrayList<>();
+		adiacenti = Graphs.neighborListOf(this.grafo, id);
+		for(Integer i : adiacenti) {
+			result.add(new VerticePeso(i, this.grafo.getEdgeWeight(this.grafo.getEdge(id, i))));
+		}
+		return result;
 	}
 
 }
