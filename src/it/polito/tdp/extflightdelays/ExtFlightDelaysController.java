@@ -50,6 +50,15 @@ public class ExtFlightDelaysController {
 
     @FXML
     void doAnalizzaAeroporti(ActionEvent event) {
+    	
+    	try {
+	    	Integer distanzaMin = Integer.parseInt(distanzaMinima.getText());
+	    	this.model.creaGrafo(distanzaMin);
+	    	txtResult.appendText("Grafo creato con " + this.model.getVertici() + "vertici e " +this.model.getArchi()+" archi\n");
+    	
+    	}catch(NumberFormatException e) {
+    		txtResult.appendText("Inserire un numero intero reale\n");
+    	}
 
     }
 

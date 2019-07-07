@@ -10,6 +10,7 @@ import java.util.List;
 
 import it.polito.tdp.extflightdelays.model.Airline;
 import it.polito.tdp.extflightdelays.model.Airport;
+import it.polito.tdp.extflightdelays.model.ArcoPeso;
 import it.polito.tdp.extflightdelays.model.Flight;
 
 public class ExtFlightDelaysDAO {
@@ -90,5 +91,34 @@ public class ExtFlightDelaysDAO {
 			System.out.println("Errore connessione al database");
 			throw new RuntimeException("Error Connection Database");
 		}
+	}
+	
+	public List<ArcoPeso> getConnessioni(Integer distanzaMedia){
+		String sql = "select origin_airport_id as v1, destination_airport_id as v2, avg(distance) as peso " + 
+				"from flights " + 
+				"where distance > ? " + 
+				"group by origin_airport_id, destination_airport_id ";
+		List<ArcoPeso> result = new ArrayList<>();
+		try {
+			Connection conn = ConnectDB.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, distanzaMedia);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				result.add(new ArcoPeso(rs.getInt("v1"),
+						rs.getInt("v2"),
+						rs.getDouble("peso")));
+			}
+
+			conn.close();
+			return result;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Errore connessione al database");
+			throw new RuntimeException("Error Connection Database");
+		}
+		
 	}
 }
